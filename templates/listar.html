@@ -21,16 +21,12 @@
                     </tr>
                 </thead> 
                 <tbody>
-                    <tr>
-                        <td>La Guitarra</td> 
-                    </tr>
-                    <tr>
-                        <td>Para no verte más</td>
-                    </tr>
-                    <tr>
-                        <td>Balada para un gordo</td>
-                    </tr>
-                </tbody>
+                {% for musica in musicas %}
+                <tr>
+                    <td>{{ musica.titulo }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
             </table>
         </div>
     </body>

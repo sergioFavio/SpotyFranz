@@ -1,3 +1,4 @@
+# coding: utf-8
 from flask import Flask, render_template, request, url_for,redirect, session, flash
 
 class Cancion:
@@ -40,14 +41,17 @@ def crear():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    proxima = request.args.get('proxima')
+    return render_template('login.html', proxima = proxima)
+
 
 @app.route('/autenticar', methods=['POST',])
 def autenticar():
     if 'patitofeo' == request.form['clave']:
         session['usuario_logueado'] = request.form['usuario']
         flash(session['usuario_logueado'] + ' ¡conectado con éxito!')
-        return redirect('/')
+        proxima_pagina = request.form['proxima']
+        return redirect('/{}'.format(proxima_pagina))
     else:
         flash('Usuario no conectado.')
         return redirect('/login')

@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 {% block contenido %}
 
-  <form action="/crear" method="post">
+  <form action="{{ url_for('crear') }}" method="post">
     <fieldset>
       <div class="form-group">
         <label for="nome">Título</label>
@@ -15,7 +15,7 @@
         <label for="console">Idioma</label>
         <input type="text" id="idioma" name="idioma" class="form-control">
       </div>
-      <button type="submit" class="btn btn-primary btn-salvar">Grabar</button>
+      <button type="submit" class="btn btn-primary btn-salvar mt-4">Grabar</button>
     </fieldset>
   </form>
 {% endblock %}

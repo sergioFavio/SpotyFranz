@@ -1,37 +1,42 @@
 # coding: utf-8
 from flask import Flask, render_template, request, url_for,redirect, session, flash
-
-class Usuario:
-    def __init__(self, nombre, nickname, clave):
-        self.nombre = nombre
-        self.nickname = nickname
-        self.clave = clave
-
-usuario1= Usuario('Jair Sampaio', 'JS', 'patitofeo')
-usuario2= Usuario('Rosa Flores', 'rosita', 'michifuz')
-usuario3= Usuario('Yami Moto Nokamina', 'kamikaze', 'sayonara')
-usuarios= { usuario1.nickname : usuario1,
-            usuario2.nickname : usuario2,
-            usuario3.nickname : usuario3
-          }
-
-
-class Cancion:
-    def __init__(self, titulo, categoria, idioma):
-        self.titulo = titulo
-        self.categoria = categoria
-        self.idioma = idioma
-
-cancion1= Cancion('La guitarra', 'Pop', 'Castellano')
-cancion2= Cancion('Para no verte más', 'Pop', 'Castellano')
-cancion3= Cancion('Balada para un gordo', 'Balada', 'Castellano')
-lista=[cancion1, cancion2, cancion3]
-
+from flask_sqlalchemy import SQLAlchemy
+        
 app = Flask(__name__)
 app.secret_key = 'cochabamba'
 
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    '{SGBD}://{usuario}:{clave}@{servidor}/{database}'.format(
+        SGBD = 'mysql+mysqlconnector',
+        usuario = 'root',
+        clave = '',
+        #clave = 'admin',
+        servidor = 'localhost',
+        database = 'spotyfranz'
+    )
+
+db = SQLAlchemy(app)
+
+class Canciones(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    titulo = db.Column(db.String(50), nullable=False)
+    categoria = db.Column(db.String(40), nullable=False)
+    idioma = db.Column(db.String(20), nullable=False)
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+class Usuarios(db.Model):
+    nickname = db.Column(db.String(8), primary_key=True)
+    nombre = db.Column(db.String(20), nullable=False)
+    clave = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
 @app.route('/')
 def index():
+    lista = Canciones.query.order_by(Canciones.id)
     return render_template('listar.html',titulo= 'Canciones', musicas=lista)
 
 
@@ -50,8 +55,17 @@ def crear():
     titulo = request.form['titulo']
     categoria = request.form['categoria']
     idioma = request.form['idioma']
-    cancion = Cancion(titulo, categoria, idioma)
-    lista.append(cancion)
+
+    cancion = Canciones.query.filter_by(titulo=titulo).first()
+
+    if cancion:
+        flash('Esta canción ya existe!')
+        return redirect(url_for('index'))
+
+    nueva_cancion = Canciones(titulo=titulo, categoria=categoria, idioma=idioma)
+    db.session.add(nueva_cancion)
+    db.session.commit()
+
     return redirect(url_for('index'))
 
 @app.route('/login')
@@ -62,8 +76,8 @@ def login():
 
 @app.route('/autenticar', methods=['POST',])
 def autenticar():
-    if request.form['usuario'] in usuarios:
-        usuario = usuarios[request.form['usuario']]
+    usuario = Usuarios.query.filter_by(nickname=request.form['usuario']).first()
+    if usuario:
         if request.form['clave'] == usuario.clave:
             session['usuario_logueado'] = usuario.nickname
             flash(usuario.nickname + ' ¡conectado con éxito!')

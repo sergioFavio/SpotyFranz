@@ -15,6 +15,7 @@
                 <td>{{ musica.titulo }}</td>
                 <td>{{ musica.categoria }}</td>
                 <td>{{ musica.idioma }}</td>
+                <td><audio controls><source src="static/upload/{{audio[loop.index0]}}" type="audio/mp3">Tu navegador no soporta audio HTML5.</audio></td>
                 <td>
                     <a href="{{ url_for('editar', id=musica.id) }}">Editar</a>
                     <a href="{{ url_for('eliminar', id=musica.id) }}">Eliminar</a>

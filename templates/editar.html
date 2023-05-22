@@ -1,6 +1,7 @@
 {% extends "template.html" %}
 {% block contenido %}
-      <form action="{{ url_for('actualizar') }}" method="post">
+      <form action="{{ url_for('actualizar') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="archivo" accept=".mp3" >
         <fieldset>
           <input type="hidden" name="id" value="{{ cancion.id }}">
           <div class="form-group">

@@ -16,7 +16,8 @@
             <label for="idioma">Idioma</label>
             <input type="text" id="idioma" name="idioma" class="form-control" value="{{ cancion.idioma }}">
           </div>
-          <button type="submit" class="btn btn-primary btn-salvar">Grabar</button>
+          <button type="submit" class="btn btn-primary mt-4">Grabar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a class="btn btn-danger mt-4" href={{ url_for('index') }}>Inicio</a>
         </fieldset>
       </form>
 {% endblock %}

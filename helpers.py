@@ -13,8 +13,6 @@ class FormularioCancion(FlaskForm):
 class FormularioUsuario(FlaskForm):
     nickname = StringField('Nickname', [validators.DataRequired(), validators.Length(min=1, max=8)])
     clave = PasswordField('Clave', [validators.DataRequired(), validators.Length(min=1, max=100)])
-    ###nickname = StringField('Nickname', [validators.DataRequired()])
-    ###clave = PasswordField('Clave', [validators.DataRequired()])
     login = SubmitField('Login')    
      
     

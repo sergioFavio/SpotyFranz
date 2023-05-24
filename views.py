@@ -5,7 +5,7 @@ from models import Canciones, Usuarios
 
 from helpers import recuperar_audio, eliminar_archivo, FormularioCancion, FormularioUsuario
 import time
-
+from flask_bcrypt import check_password_hash
         
 @app.route('/')
 def index():
@@ -118,16 +118,13 @@ def login():
 def autenticar():
     form = FormularioUsuario(request.form)
     usuario = Usuarios.query.filter_by(nickname=form.nickname.data).first()
+    clave = check_password_hash(usuario.clave, form.clave.data)
     
-    if usuario:
-        if form.clave.data == usuario.clave:
-            session['usuario_logueado'] = usuario.nickname
-            flash(usuario.nickname + ' ¡conectado con éxito!')
-            proxima_pagina = request.form['proxima']
-            return redirect(proxima_pagina)
-        else:
-            flash('Usuario no conectado.')
-            return redirect(url_for('login', proxima = url_for('nuevoregistro')))
+    if usuario and clave:
+        session['usuario_logueado'] = usuario.nickname
+        flash(usuario.nickname + ' ¡conectado con éxito!')
+        proxima_pagina = request.form['proxima']
+        return redirect(proxima_pagina)
     else:
         flash('Usuario no conectado.')
         return redirect(url_for('login', proxima = url_for('nuevoregistro')))
